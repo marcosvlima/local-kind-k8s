@@ -7,3 +7,8 @@ variable "metric_server" {
   description = "Enable or disable metric server"
   default = false
 }
+
+variable "nginx_controller" {
+  description = "Enable or disable nginx controller"
+  default = false
+}
