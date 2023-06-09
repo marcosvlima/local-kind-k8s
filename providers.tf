@@ -11,3 +11,9 @@ terraform {
 provider "kind" {
   # Configuration options
 }
+
+provider "helm" {
+  kubernetes {
+    config_path = "~/.kube/config"
+  }
+}
