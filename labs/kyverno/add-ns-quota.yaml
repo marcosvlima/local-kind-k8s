@@ -1,0 +1,73 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: add-ns-quota
+  annotations:
+    policies.kyverno.io/title: Add Quota
+    policies.kyverno.io/category: Multi-Tenancy, EKS Best Practices
+    policies.kyverno.io/subject: ResourceQuota
+    policies.kyverno.io/minversion: 1.6.0
+    policies.kyverno.io/description: >-
+      To better control the number of resources that can be created in a given
+      Namespace and provide default resource consumption limits for Pods,
+      ResourceQuota and LimitRange resources are recommended.
+      This policy will generate ResourceQuota and LimitRange resources when
+      a new Namespace is created.      
+spec:
+  generateExistingOnPolicyUpdate: true
+  rules:
+  - name: generate-resourcequota
+    match:
+      resources:
+        kinds:
+        - Namespace
+        names:
+        - mimoso-*
+    exclude:
+      resources:
+        kinds:
+        - Namespace
+        names:
+        - exclude-namespace
+    generate:
+      apiVersion: v1
+      kind: ResourceQuota
+      name: default-resourcequota
+      synchronize: true
+      namespace: "{{request.object.metadata.name}}"
+      data:
+        spec:
+          hard:
+            requests.cpu: '1'
+            requests.memory: '1Gi'
+            limits.cpu: '1'
+            limits.memory: '1Gi'
+            pods: '3'
+  - name: generate-resourcequota2
+    match:
+      resources:
+        kinds:
+        - Namespace
+        names:
+        - mimoso-*
+    exclude:
+      resources:
+        kinds:
+        - Namespace
+        names:
+        - exclude-namespace
+    generate:
+      apiVersion: v1
+      kind: ResourceQuota
+      name: default-resourcequota2
+      synchronize: true
+      namespace: "{{request.object.metadata.name}}"
+      data:
+        spec:
+          hard:
+            requests.cpu: '1'
+            requests.memory: '1Gi'
+            limits.cpu: '1'
+            limits.memory: '1Gi'
+            pods: '3'
+
